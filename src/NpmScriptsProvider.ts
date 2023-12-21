@@ -9,6 +9,7 @@ import { readFileSync } from "fs";
 import * as path from "path";
 
 import { Script } from "./Script";
+import { buildInstallScript } from "./utils";
 
 export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
   private _onDidChangeTreeData = new EventEmitter<Script | undefined | void>();
@@ -48,6 +49,7 @@ export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
         if (folderName !== workspaceRoot.name) {
           return scripts;
         }
+        // TODO: use glob to search for subprojects
         const packageJsonPath = path.join(
           workspaceRoot.uri.fsPath,
           "package.json"
@@ -55,6 +57,13 @@ export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
         const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
 
         return scripts.concat(
+          new Script(
+            'Run install',
+            workspaceRoot.uri.fsPath,
+            buildInstallScript(workspaceRoot.uri.fsPath),
+            TreeItemCollapsibleState.None,
+            true
+          ),
           Object.entries<string>(packageJson.scripts).map(
             ([label, script]) =>
               new Script(

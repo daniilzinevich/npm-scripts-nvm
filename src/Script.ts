@@ -9,7 +9,8 @@ export class Script extends TreeItem {
     public readonly label: string,
     private path: string,
     private script: string,
-    public readonly collapsibleState: TreeItemCollapsibleState
+    public readonly collapsibleState: TreeItemCollapsibleState,
+    isInstall: boolean = false,
   ) {
     super(label, collapsibleState);
     this.tooltip = `${this.label}-${this.script}`;
@@ -19,7 +20,6 @@ export class Script extends TreeItem {
       command: "npm-scripts-nvm.runNpmScript",
       arguments: [this.path, this.label],
     };
+    this.iconPath = new ThemeIcon(isInstall ? "wrench" : "play");
   }
-
-  iconPath = new ThemeIcon("debug-start");
 }
