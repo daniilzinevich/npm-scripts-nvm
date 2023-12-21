@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { NpmScriptsProvider } from "./NpmScriptsProvider";
-import { buildScriptText, pathExists } from "./utils";
+import { buildScriptText, fileExists } from "./utils";
 
 export function activate(context: vscode.ExtensionContext) {
   const rootPath =
@@ -9,11 +9,13 @@ export function activate(context: vscode.ExtensionContext) {
       ? vscode.workspace.workspaceFolders[0].uri.fsPath
       : "";
 
-  vscode.commands.executeCommand(
-    "setContext",
-    "workspaceHasPackageJSON",
-    pathExists("package.json", rootPath)
-  );
+    fileExists("package.json", rootPath, (isExists) => {
+      vscode.commands.executeCommand(
+        "setContext",
+        "workspaceHasPackageJSON",
+        isExists
+      );
+    })
 
   const npmScriptsProvider = new NpmScriptsProvider(vscode.workspace.workspaceFolders);
 

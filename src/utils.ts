@@ -1,9 +1,21 @@
 import { accessSync } from "fs";
+import { homedir } from "os";
 import * as path from "path";
+import * as glob from "glob";
 
-export const pathExists = (p: string, rootPath: string) => {
+export const fileExists = (filename: string, rootPath: string, callback: (value: boolean) => void) => {
+  glob(`${rootPath}/**/${filename}`, {}, (err) => {
+    if (err) {
+      callback(false)
+    } else {
+      callback(true)
+    }
+  })
+}
+
+export const pathExists = (filename: string, rootPath: string) => {
   try {
-    accessSync(path.join(rootPath, p));
+    accessSync(path.join(rootPath, filename));
   } catch {
     return false;
   }
@@ -14,8 +26,8 @@ export const buildScriptText = (script: string, rootPath: string) => {
   const scripts = [];
 
   // TODO: add support for other config files (bashrc, bash_profile, ...?)
-  if (pathExists("~/.zshrc", rootPath)) {
-    scripts.push("source ~/.zshrc");
+  if (pathExists(".zshrc", homedir())) {
+    scripts.push(`source ${path.join(homedir(), ".zshrc")}`);
   }
 
   // TODO: check if nvm is installed
