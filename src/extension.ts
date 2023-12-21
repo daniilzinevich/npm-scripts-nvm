@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { NpmScriptsProvider } from "./NpmScriptsProvider";
-import { buildScriptText, fileExists } from "./utils";
+import { fileExists } from "./utils";
 
 export function activate(context: vscode.ExtensionContext) {
   const rootPath =
@@ -26,16 +26,14 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "npm-scripts-nvm.runNpmScript",
-      (rootPath, script) => {
+      (path, script) => {
         vscode.tasks.executeTask(
           new vscode.Task(
             { type: "shell" },
             vscode.TaskScope.Global,
             script,
-            'npm',
-            new vscode.ShellExecution(buildScriptText(script, rootPath), {
-              cwd: rootPath,
-            })
+            "npm", // TODO: replace with real executioner
+            new vscode.ShellExecution(script, { cwd: path })
           )
         );
       }

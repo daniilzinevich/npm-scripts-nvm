@@ -22,17 +22,7 @@ export const pathExists = (filename: string, rootPath: string) => {
   return true;
 };
 
-export const buildInstallScript = (rootPath: string) => {
-  if (pathExists("yarn.lock", rootPath)) {
-    return "yarn install";
-  } else if (pathExists("pnpm-lock.yaml", rootPath)) {
-    return "pnpm install";
-  } else {
-    return "npm install";
-  }
-};
-
-export const buildScriptText = (script: string, rootPath: string) => {
+const scriptWrapper = (rootPath: string, callback: () => void) => {
   const scripts = [];
 
   // TODO: add support for other config files (bashrc, bash_profile, ...?)
@@ -45,13 +35,30 @@ export const buildScriptText = (script: string, rootPath: string) => {
     scripts.push("nvm use");
   }
 
-  if (pathExists("yarn.lock", rootPath)) {
-    scripts.push(`yarn ${script}`);
-  } else if (pathExists("pnpm-lock.yaml", rootPath)) {
-    scripts.push(`pnpm run ${script}`);
-  } else {
-    scripts.push(`npm run ${script}`);
-  }
+  scripts.push(callback());
 
   return scripts.join(" && ");
+}
+
+export const buildInstallScript = (rootPath: string) => {
+  return scriptWrapper(rootPath, () => {
+    if (pathExists("yarn.lock", rootPath)) {
+      return "yarn install";
+    } else if (pathExists("pnpm-lock.yaml", rootPath)) {
+      return "pnpm install";
+    }
+    return "npm install";
+  });
+};
+
+export const buildScript = (script: string, rootPath: string) => {
+  return scriptWrapper(rootPath, () => {
+    if (pathExists("yarn.lock", rootPath)) {
+      return `yarn ${script}`;
+    } else if (pathExists("pnpm-lock.yaml", rootPath)) {
+      return `pnpm run ${script}`;
+    } else {
+      return `npm run ${script}`;
+    }
+  });
 };

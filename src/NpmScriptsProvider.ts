@@ -8,7 +8,7 @@ import {
 import { readFileSync } from "fs";
 import * as path from "path";
 
-import { Script } from "./Script";
+import { InstallScript, Script } from "./Script";
 import { buildInstallScript } from "./utils";
 
 export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
@@ -57,12 +57,10 @@ export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
         const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
 
         return scripts.concat(
-          new Script(
+          new InstallScript(
             'Run install',
             workspaceRoot.uri.fsPath,
-            buildInstallScript(workspaceRoot.uri.fsPath),
-            TreeItemCollapsibleState.None,
-            true
+            'install'
           ),
           Object.entries<string>(packageJson.scripts).map(
             ([label, script]) =>
@@ -70,7 +68,6 @@ export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
                 label,
                 workspaceRoot.uri.fsPath,
                 script,
-                TreeItemCollapsibleState.None
               )
           )
         );
