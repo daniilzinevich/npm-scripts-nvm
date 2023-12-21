@@ -2,7 +2,7 @@
   "name": "npm-scripts-nvm",
   "displayName": "NPM Scripts NVM",
   "description": "Extension to run npm scripts with nvm",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "engines": {
     "vscode": "^1.69.0"
   },
@@ -11,7 +11,9 @@
     "Other"
   ],
   "activationEvents": [
-    "workspaceContains:./package.json"
+    "workspaceContains:./package.json",
+    "onLanguage:javascript",
+    "onLanguage:typescript"
   ],
   "main": "./out/extension.js",
   "license": "SEE LICENSE IN LICENSE.md",

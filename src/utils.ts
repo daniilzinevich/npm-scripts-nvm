@@ -11,8 +11,14 @@ export const pathExists = (p: string, rootPath: string) => {
 };
 
 export const buildScriptText = (script: string, rootPath: string) => {
-  const scripts = ["source ~/.zshrc"];
+  const scripts = [];
 
+  // TODO: add support for other config files (bashrc, bash_profile, ...?)
+  if (pathExists("~/.zshrc", rootPath)) {
+    scripts.push("source ~/.zshrc");
+  }
+
+  // TODO: check if nvm is installed
   if (pathExists(".nvmrc", rootPath)) {
     scripts.push("nvm use");
   }

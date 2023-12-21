@@ -2,12 +2,13 @@ import {
   TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
-  ThemeIcon,
   EventEmitter,
   WorkspaceFolder,
 } from "vscode";
 import { readFileSync } from "fs";
 import * as path from "path";
+
+import { Script } from "./Script";
 
 export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
   private _onDidChangeTreeData = new EventEmitter<Script | undefined | void>();
@@ -67,24 +68,4 @@ export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
       }, []) ?? []
     );
   }
-}
-
-class Script extends TreeItem {
-  constructor(
-    public readonly label: string,
-    private path: string,
-    private script: string,
-    public readonly collapsibleState: TreeItemCollapsibleState
-  ) {
-    super(label, collapsibleState);
-    this.tooltip = `${this.label}-${this.script}`;
-    this.description = this.script;
-    this.command = {
-      title: "Run NPM script",
-      command: "npm-scripts-nvm.runNpmScript",
-      arguments: [this.path, this.label],
-    };
-  }
-
-  iconPath = new ThemeIcon("debug-start");
 }
