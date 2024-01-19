@@ -28,14 +28,14 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "npm-scripts-nvm.runNpmScript",
-      (path, script) => {
+      (root, script) => {
         vscode.tasks.executeTask(
           new vscode.Task(
             { type: "shell" },
-            vscode.TaskScope.Global,
+            root,
             script,
-            executioner(path),
-            new vscode.ShellExecution(script, { cwd: path })
+            executioner(root.uri.fsPath),
+            new vscode.ShellExecution(script, { cwd: root.uri.fsPath })
           )
         );
       }

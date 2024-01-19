@@ -57,18 +57,9 @@ export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
         const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
 
         return scripts.concat(
-          new InstallScript(
-            'Run install',
-            workspaceRoot.uri.fsPath,
-            'install'
-          ),
+          new InstallScript("Run install", workspaceRoot, "install"),
           Object.entries<string>(packageJson.scripts).map(
-            ([label, script]) =>
-              new Script(
-                label,
-                workspaceRoot.uri.fsPath,
-                script,
-              )
+            ([label, script]) => new Script(label, workspaceRoot, script)
           )
         );
       }, []) ?? []

@@ -1,14 +1,15 @@
 import {
   TreeItem,
   TreeItemCollapsibleState,
-  ThemeIcon
+  ThemeIcon,
+  WorkspaceFolder
 } from "vscode";
 import { buildScript } from "./utils";
 
 export class Script extends TreeItem {
   constructor(
     public readonly label: string,
-    protected path: string,
+    protected root: WorkspaceFolder,
     protected script: string
   ) {
     super(label, TreeItemCollapsibleState.None);
@@ -17,7 +18,7 @@ export class Script extends TreeItem {
     this.command = {
       title: "Run NPM script",
       command: "npm-scripts-nvm.runNpmScript",
-      arguments: [this.path, buildScript(label, this.path)],
+      arguments: [this.root, buildScript(label, this.root.uri.fsPath)],
     };
   }
 
