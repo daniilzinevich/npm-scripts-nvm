@@ -40,25 +40,32 @@ const scriptWrapper = (rootPath: string, callback: () => void) => {
   return scripts.join(" && ");
 }
 
+const scripts = {
+  yarn: {
+    install: "yarn install",
+    run: (script: string) => `yarn ${script}`,
+  },
+  pnpm: {
+    install: "pnpm install",
+    run: (script: string) => `pnpm run ${script}`,
+  },
+  npm: {
+    install: "npm install",
+    run: (script: string) => `npm run ${script}`,
+  },
+};
+
+export const executioner = (rootPath: string) =>
+  pathExists("yarn.lock", rootPath)
+    ? "yarn"
+    : pathExists("pnpm-lock.yaml", rootPath)
+    ? "pnpm"
+    : "npm";
+
 export const buildInstallScript = (rootPath: string) => {
-  return scriptWrapper(rootPath, () => {
-    if (pathExists("yarn.lock", rootPath)) {
-      return "yarn install";
-    } else if (pathExists("pnpm-lock.yaml", rootPath)) {
-      return "pnpm install";
-    }
-    return "npm install";
-  });
+  return scriptWrapper(rootPath, () => scripts[executioner(rootPath)].install);
 };
 
 export const buildScript = (script: string, rootPath: string) => {
-  return scriptWrapper(rootPath, () => {
-    if (pathExists("yarn.lock", rootPath)) {
-      return `yarn ${script}`;
-    } else if (pathExists("pnpm-lock.yaml", rootPath)) {
-      return `pnpm run ${script}`;
-    } else {
-      return `npm run ${script}`;
-    }
-  });
+  return scriptWrapper(rootPath, () => scripts[executioner(rootPath)].run(script));
 };

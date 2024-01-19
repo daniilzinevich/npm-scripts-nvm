@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { NpmScriptsProvider } from "./NpmScriptsProvider";
-import { fileExists } from "./utils";
+import { executioner, fileExists } from "./utils";
 
 export function activate(context: vscode.ExtensionContext) {
   const rootPath =
@@ -9,15 +9,17 @@ export function activate(context: vscode.ExtensionContext) {
       ? vscode.workspace.workspaceFolders[0].uri.fsPath
       : "";
 
-    fileExists("package.json", rootPath, (isExists) => {
-      vscode.commands.executeCommand(
-        "setContext",
-        "workspaceHasPackageJSON",
-        isExists
-      );
-    })
+  fileExists("package.json", rootPath, (isExists) => {
+    vscode.commands.executeCommand(
+      "setContext",
+      "workspaceHasPackageJSON",
+      isExists
+    );
+  });
 
-  const npmScriptsProvider = new NpmScriptsProvider(vscode.workspace.workspaceFolders);
+  const npmScriptsProvider = new NpmScriptsProvider(
+    vscode.workspace.workspaceFolders
+  );
 
   vscode.window.createTreeView("npm-scripts-nvm.npmScripts", {
     treeDataProvider: npmScriptsProvider,
@@ -32,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
             { type: "shell" },
             vscode.TaskScope.Global,
             script,
-            "npm", // TODO: replace with real executioner
+            executioner(path),
             new vscode.ShellExecution(script, { cwd: path })
           )
         );

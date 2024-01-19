@@ -8,8 +8,8 @@ import {
 import { readFileSync } from "fs";
 import * as path from "path";
 
-import { InstallScript, Script } from "./Script";
-import { buildInstallScript } from "./utils";
+import { Script } from "./Script";
+import { InstallScript } from "./InstallScript";
 
 export class NpmScriptsProvider implements TreeDataProvider<TreeItem> {
   private _onDidChangeTreeData = new EventEmitter<Script | undefined | void>();
